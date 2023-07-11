@@ -106,9 +106,17 @@ extension CodableMacro {
         ///
         /// - Returns: The generated initializer declaration.
         func decoding(
-            in context: some MacroExpansionContext
+            in context: some MacroExpansionContext,
+            providingMembersOf declaration: some DeclGroupSyntax
         ) -> InitializerDeclSyntax {
-            return InitializerDeclSyntax.decode(modifiers: options.modifiers) {
+            
+            var modiferOptions = options.modifiers
+            
+            if declaration.is(ClassDeclSyntax.self) {
+                modiferOptions = modiferOptions?.appending(DeclModifierSyntax.init(name: .keyword(.required)))
+            }
+            
+            return InitializerDeclSyntax.decode(modifiers: modiferOptions) {
                 for data in root.datas {
                     data.topDecoding(in: context)
                 }

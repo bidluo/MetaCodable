@@ -183,7 +183,7 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
 
         return [
             DeclSyntax(registrar.memberInit(in: context)),
-            DeclSyntax(registrar.decoding(in: context)),
+            DeclSyntax(registrar.decoding(in: context, providingMembersOf: declaration)),
             DeclSyntax(registrar.encoding(in: context)),
             DeclSyntax(registrar.codingKeys(in: context)),
         ]

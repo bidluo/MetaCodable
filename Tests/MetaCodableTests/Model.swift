@@ -1,6 +1,12 @@
 import Foundation
 import MetaCodable
 
+
+@Codable
+public class CodableDataClass {
+    let groupedOne, groupedTwo: String, groupedThree: Int
+}
+
 @Codable
 public struct CodableData {
     let groupedOne, groupedTwo: String, groupedThree: Int
