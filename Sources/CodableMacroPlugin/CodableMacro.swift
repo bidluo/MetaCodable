@@ -56,12 +56,12 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
     ) throws -> [DeclSyntax] {
         let name = node.attributeName
             .as(SimpleTypeIdentifierSyntax.self)!.description
-        guard declaration.is(StructDeclSyntax.self) else {
+        guard declaration.is(StructDeclSyntax.self) || declaration.is(ClassDeclSyntax.self) else {
             context.diagnose(
                 Diagnostic(
                     node: Syntax(node),
                     message: MetaCodableMessage.diagnostic(
-                        message: "@\(name) attribute only works for structs",
+                        message: "@\(name) attribute only works for structs or classes",
                         id: .codableMacroMisuse,
                         severity: .error
                     ),
