@@ -53,9 +53,9 @@ struct Codable: Attribute {
     ) -> Bool {
         var diagnostics: [(MetaCodableMessage, [FixIt])] = []
 
-        if !declaration.is(StructDeclSyntax.self) {
+        if !declaration.is(StructDeclSyntax.self), !declaration.is(ClassDeclSyntax.self)  {
             let message = node.diagnostic(
-                message: "@\(name) only works for struct declarations",
+                message: "@\(name) only works for struct or class declarations",
                 id: misuseMessageID,
                 severity: .error
             )
@@ -120,7 +120,7 @@ extension Codable: ConformanceMacro, MemberMacro {
         guard Self(from: node)!.validate(declaration: declaration, in: context)
         else { return [] }
 
-        let options = Registrar.Options(modifiers: declaration.modifiers)
+        let options = Registrar.Options(modifiers: declaration.modifiers, declaration: declaration)
         var registrar = Registrar(options: options)
 
         declaration.memberBlock.members.forEach { member in

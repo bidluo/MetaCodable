@@ -18,6 +18,9 @@ struct Registrar {
         /// The default list of modifiers to be applied to generated
         /// conformance implementation declarations.
         fileprivate let modifiers: ModifierListSyntax?
+        
+        /// The declaration this macro attribute is attached to
+        fileprivate var declaration: DeclGroupSyntax
 
         /// Member-wise initialization generator with provided options.
         ///
@@ -32,10 +35,12 @@ struct Registrar {
         /// - Parameters:
         ///   - modifiers: List of modifiers need to be applied
         ///                to generated declarations.
+        ///   - declaration: The declaration this macro attribute is attached to
         ///
         /// - Returns: The newly created options.
-        init(modifiers: ModifierListSyntax? = nil) {
+        init(modifiers: ModifierListSyntax? = nil, declaration: some DeclGroupSyntax) {
             self.modifiers = modifiers
+            self.declaration = declaration
         }
     }
 
@@ -136,8 +141,14 @@ struct Registrar {
     private func decoding(
         in context: some MacroExpansionContext
     ) -> InitializerDeclSyntax {
+        var modiferOptions = options.modifiers
+        
+        if options.declaration.is(ClassDeclSyntax.self) {
+            modiferOptions = modiferOptions?.appending(DeclModifierSyntax.init(name: .keyword(.required)))
+        }
+        
         return InitializerDeclSyntax.decode(
-            modifiers: options.modifiers
+            modifiers: modiferOptions
         ) { decoder in
             root.decoding(
                 in: context,
